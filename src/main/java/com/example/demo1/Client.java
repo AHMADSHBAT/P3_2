@@ -1,64 +1,80 @@
 package com.example.demo1;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client
-{
+public class Client extends Thread {
     String host;
     int port;
     Socket clientSocket;
+    PrintStream printStream;
+    Scanner scanner;
     OutputFile out;
-     Client(String host, int port, OutputFile out) {
-         this.host = host;
-         this.port = port;
-         this.out = out;
-         if(out == null){
-             System.out.println("[ERROR] the output file in invalid");
-         }
-         try {
-             this.clientSocket = new Socket(host, port);
-         } catch (IOException e)
-         {
-             e.printStackTrace();
-         }
+    TextArea tsend;
+    TextArea trec;
+    Button send;
+    Button ring;
 
-     }
+    Client(String host, int port, OutputFile out, TextArea ts, TextArea tr
+            Button send, Button ring) throws IOException {
+        this.host = host;
+        this.port = port;
+        this.out = out;
+        this.tsend = ts;
+        this.trec = tr;
+        this.send = send;
+        this.ring = ring;
+        if (out == null) {
+            System.out.println("[ERROR] the output file in invalid");
+        }
+        try {
+            this.clientSocket = new Socket(host, port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.printStream = new PrintStream(this.clientSocket.getOutputStream());
+        this.scanner = new Scanner(this.clientSocket.getInputStream());
 
-     Client()
-     {
-         this.host = "localhost";
-         this.port = 1234;
-         try{
-             this.clientSocket = new Socket("localhost", 1234);
-         } catch (IOException e)
-         {
-             e.printStackTrace();
-         }
+    }
 
-     }
+    public boolean isAliveSocket() {
+        return this.clientSocket == null;
+    }
 
-     public Status listening(Client client) throws IOException {
-         if(client == null)
-         {
-             System.out.println("[ERROR] null client object.");
-             return Status.INVALID_ARGUMENTS;
-         }
-         if(client.clientSocket == null)
-         {
-             BufferedWriter buf = new BufferedWriter(new FileWriter(this.out.getPath());
-             buf.write("[ERROR] the socket is dead :(");
-         }
-         Scanner socketScanner = new Scanner(this.clientSocket.getInputStream());
-         P
-
-     }
+    private class ThreadHander extends Thread {
 
 
+        @Override
+        public void run() {
+            if (!isAliveSocket()) {
+                try {
+                    this.clientSocket = new Socket("localhost", 1234);
+                } catch (Exception e) {
+                    System.out.println("the socket is dead.");
+                }
+            }
+            while (true) {
+                String msg;
+                EventHandler<ActionEvent> sendEvent = new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent actionEvent) {
+                        msg = this.tsend.
+                    }
+                }
+            }
 
 
+        }
 
+
+    }
 }
